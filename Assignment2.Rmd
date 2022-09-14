@@ -1,0 +1,71 @@
+---
+title: "515_Assignment2"
+authur: Guan Yu Teoh
+date: "2022-09-14"
+output: 
+   html_document:
+          theme:
+              bootswatch: cyborg
+---
+
+
+```{r setup, include=FALSE}
+install.packages("bslib", repos = "http://cran.us.r-project.org")
+install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+install.packages("knitr", repos = "http://cran.us.r-project.org")
+install.packages("readr", repos = "http://cran.us.r-project.org")
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(tidyverse)
+```
+
+```{r, echo = TRUE}
+```
+The title of my research is The Causes of Fatal Car Collisions in the United States. The dataset that I will be using is bad-drivers obtained from the link --  https://github.com/fivethirtyeight/data/tree/master/bad-drivers. This dataset describes what physical condition/drivers' actions that caused the fatal collissions in each state which include drivers who were speeding, who were intoxicated, who were not distracted and who have never been in any accidents. This dataset is from the article "Dear Mona, Which State Has The Worse Drivers?" by Mona Chalebi published on FiveThirtyEight. This dataset is a combination of data from multiple sources inlcuding National Highway Traffic Sfety Administration, 2012 and Natioal Association of Insurance Commisioners, 2010. This dataset is a CSV file.. I will be getting rid of two columns regarding insurance details because it does not help with my analysis. 
+
+```{r, echo = TRUE}
+#reading file using read_csv
+url <- "https://raw.githubusercontent.com/fivethirtyeight/data/master/bad-drivers/bad-drivers.csv"
+df <- read_csv(url)
+```
+
+```{r, include = TRUE}
+#Renaming the columns and cutting down two uneccesary columns so its easier to read/understand and saves space.
+df <- select(df,- c('Car Insurance Premiums ($)', 'Losses incurred by insurance companies for collisions per insured driver ($)'))
+df<- df %>% 
+  rename("drivers_in_fatal_collision_per_bmiles" = "Number of drivers involved in fatal collisions per billion miles",
+         "Drivers_Speeding_Pct" = "Percentage Of Drivers Involved In Fatal Collisions Who Were Speeding",
+         "Drivers_Not_Distracted" = "Percentage Of Drivers Involved In Fatal Collisions Who Were Not Distracted",
+         "Drivers_Alcohol_Impaired_Pct" = `Percentage Of Drivers Involved In Fatal Collisions Who Were Alcohol-Impaired`,
+         "Drivers_No_Prior_Accidents" = "Percentage Of Drivers Involved In Fatal Collisions Who Had Not Been Involved In Any Previous Accidents")
+```
+
+```{r, echo = TRUE}
+```
+This dataframe has `r nrow(df)` rows and `r ncol(df)` columns . The names of the columns and a brief description of each are in the table below:
+
+
+```{r, echo = TRUE}
+var_descriptions <- data.frame(
+  Variables = c('State','drivers_in_fatal_collision_per_bmiles','Drivers_Speeding_Pct','Drivers_Alcohol_Impaired_Pct','Drivers_Not_Distracted','Drivers_No_Prior_Accidents'),
+  Description = c(
+    "Every State in the United States",
+    "Drivers Involved In Fatal Collision Per Billion Miles (%)",
+    "Drivers who were speeding that caused the fatal collison (%)",
+    "Drivers who were intoxicated during fatal collision (%)",
+    "Drivers who were not distracted during fatal collison (%)",
+    "Drivers in fatal collision who did no have prior accidents before (%)"
+  )
+)
+knitr::kable(var_descriptions, format = "html")
+```
+
+```{r, echo = TRUE}
+cols_summary <- select(df,- c('Drivers_Alcohol_Impaired_Pct', 'Drivers_No_Prior_Accidents'))
+```
+
+```{r, echo=TRUE}
+summary = summary(cols_summary)
+summary
+```
